@@ -4,7 +4,6 @@ import ZipCodeInput from '../components/ZipCodeInput.vue'
 import ProductSelector from '../components/ProductSelector.vue'
 import SearchResults from '../components/SearchResults.vue'
 import NotificationModal from '../components/NotificationModal.vue'
-import TestForm from '../components/TestForm.vue'
 
 interface Store {
   id: string
@@ -96,12 +95,6 @@ const closeNotificationModal = () => {
       <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
         Check availability for in-store pickup near your location
       </p>
-    </div>
-
-    <!-- Test Form -->
-    <div class="card mb-8">
-      <h2 class="text-xl font-bold mb-4">Test Form (Simple)</h2>
-      <TestForm />
     </div>
 
     <!-- Search Form -->

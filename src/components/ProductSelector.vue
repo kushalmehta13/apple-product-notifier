@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 
 interface Props {
   modelValue: string
@@ -33,69 +33,64 @@ const products = [
   }
 ]
 
-// Parse the current modelValue to extract product and color
-const currentValue = computed(() => props.modelValue || '')
-
 const selectedStorage = ref('')
 const selectedColor = ref('')
 
-// Parse the modelValue when it changes
-const parseModelValue = () => {
-  const value = currentValue.value
-  if (!value) {
+// Sync with external modelValue changes
+watch(() => props.modelValue, (newValue) => {
+  console.log('ProductSelector received modelValue:', newValue)
+  
+  if (!newValue) {
     selectedStorage.value = ''
     selectedColor.value = ''
     return
   }
   
-  // Check if it's a complete selection (product-color)
-  if (value.includes('-') && value.split('-').length >= 2) {
-    const parts = value.split('-')
+  // Parse the value to extract storage and color
+  if (newValue.includes('-') && newValue.split('-').length >= 2) {
+    const parts = newValue.split('-')
     const colorPart = parts[parts.length - 1]
     const productPart = parts.slice(0, -1).join('-')
     
-    // Find the matching product
+    // Find matching product
     const product = products.find(p => p.id === productPart)
     if (product) {
       selectedStorage.value = product.id
       selectedColor.value = colorPart
     }
   } else {
-    // It's just a product selection
-    const product = products.find(p => p.id === value)
+    // Just storage selection
+    const product = products.find(p => p.id === newValue)
     if (product) {
       selectedStorage.value = product.id
       selectedColor.value = ''
     }
   }
-}
+}, { immediate: true })
 
-// Initialize values
-parseModelValue()
-
-const updateValue = () => {
+const updateModelValue = () => {
+  let newValue = ''
+  
   if (selectedStorage.value && selectedColor.value) {
-    emit('update:modelValue', `${selectedStorage.value}-${selectedColor.value}`)
+    newValue = `${selectedStorage.value}-${selectedColor.value}`
   } else if (selectedStorage.value) {
-    emit('update:modelValue', selectedStorage.value)
-  } else {
-    emit('update:modelValue', '')
+    newValue = selectedStorage.value
   }
+  
+  console.log('ProductSelector emitting:', newValue)
+  emit('update:modelValue', newValue)
 }
 
 const handleStorageChange = () => {
+  console.log('Storage changed to:', selectedStorage.value)
   selectedColor.value = '' // Reset color when storage changes
-  updateValue()
+  updateModelValue()
 }
 
 const handleColorChange = () => {
-  updateValue()
+  console.log('Color changed to:', selectedColor.value)
+  updateModelValue()
 }
-
-// Watch for external changes to modelValue
-watch(() => props.modelValue, () => {
-  parseModelValue()
-})
 </script>
 
 <template>
