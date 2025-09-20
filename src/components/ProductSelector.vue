@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 interface Props {
   modelValue: string
@@ -33,49 +33,69 @@ const products = [
   }
 ]
 
-const selectedProduct = ref('')
+// Parse the current modelValue to extract product and color
+const currentValue = computed(() => props.modelValue || '')
+
+const selectedStorage = ref('')
 const selectedColor = ref('')
 
-const handleProductChange = () => {
-  // Reset color when storage changes
-  selectedColor.value = ''
-  // Only emit if we have a product selected
-  if (selectedProduct.value) {
-    emit('update:modelValue', selectedProduct.value)
+// Parse the modelValue when it changes
+const parseModelValue = () => {
+  const value = currentValue.value
+  if (!value) {
+    selectedStorage.value = ''
+    selectedColor.value = ''
+    return
+  }
+  
+  // Check if it's a complete selection (product-color)
+  if (value.includes('-') && value.split('-').length >= 2) {
+    const parts = value.split('-')
+    const colorPart = parts[parts.length - 1]
+    const productPart = parts.slice(0, -1).join('-')
+    
+    // Find the matching product
+    const product = products.find(p => p.id === productPart)
+    if (product) {
+      selectedStorage.value = product.id
+      selectedColor.value = colorPart
+    }
+  } else {
+    // It's just a product selection
+    const product = products.find(p => p.id === value)
+    if (product) {
+      selectedStorage.value = product.id
+      selectedColor.value = ''
+    }
+  }
+}
+
+// Initialize values
+parseModelValue()
+
+const updateValue = () => {
+  if (selectedStorage.value && selectedColor.value) {
+    emit('update:modelValue', `${selectedStorage.value}-${selectedColor.value}`)
+  } else if (selectedStorage.value) {
+    emit('update:modelValue', selectedStorage.value)
   } else {
     emit('update:modelValue', '')
   }
+}
+
+const handleStorageChange = () => {
+  selectedColor.value = '' // Reset color when storage changes
+  updateValue()
 }
 
 const handleColorChange = () => {
-  // Only emit if we have both product and color selected
-  if (selectedProduct.value && selectedColor.value) {
-    emit('update:modelValue', `${selectedProduct.value}-${selectedColor.value}`)
-  } else if (selectedProduct.value) {
-    emit('update:modelValue', selectedProduct.value)
-  } else {
-    emit('update:modelValue', '')
-  }
+  updateValue()
 }
 
 // Watch for external changes to modelValue
-watch(() => props.modelValue, (newValue) => {
-  if (newValue && newValue.includes('-')) {
-    const parts = newValue.split('-')
-    if (parts.length >= 2) {
-      const colorPart = parts[parts.length - 1]
-      const productPart = parts.slice(0, -1).join('-')
-      selectedProduct.value = productPart
-      selectedColor.value = colorPart
-    }
-  } else if (newValue) {
-    selectedProduct.value = newValue
-    selectedColor.value = ''
-  } else {
-    selectedProduct.value = ''
-    selectedColor.value = ''
-  }
-}, { immediate: true })
+watch(() => props.modelValue, () => {
+  parseModelValue()
+})
 </script>
 
 <template>
@@ -91,8 +111,8 @@ watch(() => props.modelValue, (newValue) => {
       </label>
       <select
         id="storage"
-        v-model="selectedProduct"
-        @change="handleProductChange"
+        v-model="selectedStorage"
+        @change="handleStorageChange"
         class="input-field"
       >
         <option value="">Select storage capacity</option>
@@ -115,14 +135,14 @@ watch(() => props.modelValue, (newValue) => {
         id="color"
         v-model="selectedColor"
         @change="handleColorChange"
-        :disabled="!selectedProduct"
+        :disabled="!selectedStorage"
         class="input-field disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <option value="">
-          {{ selectedProduct ? 'Select color' : 'Select storage first' }}
+          {{ selectedStorage ? 'Select color' : 'Select storage first' }}
         </option>
         <option 
-          v-for="color in products.find(p => p.id === selectedProduct)?.colors || []" 
+          v-for="color in products.find(p => p.id === selectedStorage)?.colors || []" 
           :key="color" 
           :value="color.toLowerCase().replace(' ', '-')"
         >
