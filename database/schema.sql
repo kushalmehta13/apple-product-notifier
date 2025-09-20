@@ -128,11 +128,17 @@ CREATE TRIGGER update_notifications_updated_at
 
 -- Insert sample Apple stores (you'll need to populate with real data)
 INSERT INTO apple_stores (name, address, city, state, zip_code, latitude, longitude, phone) VALUES
+-- San Francisco Bay Area stores
 ('Apple Store - Union Square', '300 Post St', 'San Francisco', 'CA', '94108', 37.7880, -122.4074, '(415) 392-0202'),
 ('Apple Store - Stonestown Galleria', '3251 20th Ave', 'San Francisco', 'CA', '94132', 37.7318, -122.4667, '(415) 759-2220'),
 ('Apple Store - Palo Alto', '340 University Ave', 'Palo Alto', 'CA', '94301', 37.4419, -122.1430, '(650) 330-0100'),
 ('Apple Store - Valley Fair', '2855 Stevens Creek Blvd', 'San Jose', 'CA', '95128', 37.3230, -121.9469, '(408) 446-9400'),
-('Apple Store - Stanford Shopping Center', '180 El Camino Real', 'Palo Alto', 'CA', '94304', 37.4419, -122.1616, '(650) 324-6200')
+('Apple Store - Stanford Shopping Center', '180 El Camino Real', 'Palo Alto', 'CA', '94304', 37.4419, -122.1616, '(650) 324-6200'),
+-- Seattle area stores
+('Apple Store - University Village', '2675 NE Village Ln', 'Seattle', 'WA', '98105', 47.6615, -122.2996, '(206) 523-0100'),
+('Apple Store - Bellevue Square', '575 Bellevue Square', 'Bellevue', 'WA', '98004', 47.6163, -122.2056, '(425) 646-6100'),
+('Apple Store - Southcenter', '2800 Southcenter Mall', 'Tukwila', 'WA', '98188', 47.4632, -122.2606, '(206) 246-7300'),
+('Apple Store - Alderwood', '3000 184th St SW', 'Lynnwood', 'WA', '98037', 47.8228, -122.2653, '(425) 670-1200')
 ON CONFLICT DO NOTHING;
 
 -- Enable Row Level Security (RLS)

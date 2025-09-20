@@ -114,7 +114,9 @@ The notification system is set up but not yet integrated with SMS/Email services
 
 After setup, you can test the application by:
 
-1. Entering a ZIP code from the sample data (94108, 94132, 94301, 95128, 94304)
+1. Entering a ZIP code from the sample data:
+   - **San Francisco Bay Area**: 94108, 94132, 94301, 95128, 94304
+   - **Seattle Area**: 98121
 2. Selecting an iPhone 17 Pro Max configuration
 3. Clicking "Search Stores" to see results
 4. Setting up notifications

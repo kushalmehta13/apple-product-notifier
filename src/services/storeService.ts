@@ -24,6 +24,7 @@ export async function zipCodeToCoordinates(zipCode: string): Promise<{ latitude:
     '94301': { latitude: 37.4419, longitude: -122.1430 }, // Palo Alto
     '95128': { latitude: 37.3230, longitude: -121.9469 }, // San Jose
     '94304': { latitude: 37.4419, longitude: -122.1616 }, // Palo Alto
+    '98121': { latitude: 47.6137, longitude: -122.3379 }, // Seattle, WA
   }
   
   const coords = zipCoordinates[zipCode]
