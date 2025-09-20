@@ -37,21 +37,43 @@ const selectedProduct = ref('')
 const selectedColor = ref('')
 
 const handleProductChange = () => {
-  emit('update:modelValue', `${selectedProduct.value}-${selectedColor.value}`)
+  // Reset color when storage changes
+  selectedColor.value = ''
+  // Only emit if we have a product selected
+  if (selectedProduct.value) {
+    emit('update:modelValue', selectedProduct.value)
+  } else {
+    emit('update:modelValue', '')
+  }
 }
 
 const handleColorChange = () => {
-  if (selectedProduct.value) {
+  // Only emit if we have both product and color selected
+  if (selectedProduct.value && selectedColor.value) {
     emit('update:modelValue', `${selectedProduct.value}-${selectedColor.value}`)
+  } else if (selectedProduct.value) {
+    emit('update:modelValue', selectedProduct.value)
+  } else {
+    emit('update:modelValue', '')
   }
 }
 
 // Watch for external changes to modelValue
 watch(() => props.modelValue, (newValue) => {
-  if (newValue) {
-    const [product, color] = newValue.split('-').slice(-2)
-    selectedProduct.value = newValue.replace(`-${color}`, '')
-    selectedColor.value = color
+  if (newValue && newValue.includes('-')) {
+    const parts = newValue.split('-')
+    if (parts.length >= 2) {
+      const colorPart = parts[parts.length - 1]
+      const productPart = parts.slice(0, -1).join('-')
+      selectedProduct.value = productPart
+      selectedColor.value = colorPart
+    }
+  } else if (newValue) {
+    selectedProduct.value = newValue
+    selectedColor.value = ''
+  } else {
+    selectedProduct.value = ''
+    selectedColor.value = ''
   }
 }, { immediate: true })
 </script>
@@ -85,7 +107,7 @@ watch(() => props.modelValue, (newValue) => {
     </div>
 
     <!-- Color Selection -->
-    <div v-if="selectedProduct">
+    <div>
       <label for="color" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
         Color
       </label>
@@ -93,9 +115,12 @@ watch(() => props.modelValue, (newValue) => {
         id="color"
         v-model="selectedColor"
         @change="handleColorChange"
-        class="input-field"
+        :disabled="!selectedProduct"
+        class="input-field disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <option value="">Select color</option>
+        <option value="">
+          {{ selectedProduct ? 'Select color' : 'Select storage first' }}
+        </option>
         <option 
           v-for="color in products.find(p => p.id === selectedProduct)?.colors || []" 
           :key="color" 

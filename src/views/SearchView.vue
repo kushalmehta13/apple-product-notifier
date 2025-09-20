@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import ZipCodeInput from '../components/ZipCodeInput.vue'
 import ProductSelector from '../components/ProductSelector.vue'
 import SearchResults from '../components/SearchResults.vue'
@@ -21,6 +21,15 @@ const searchState = reactive({
   isSearching: false,
   results: [] as Store[],
   hasSearched: false
+})
+
+// Debug: Watch for changes to see what's happening
+watch(() => searchState.zipCode, (newValue) => {
+  console.log('ZIP Code changed:', newValue)
+})
+
+watch(() => searchState.product, (newValue) => {
+  console.log('Product changed:', newValue)
 })
 
 const showNotificationModal = ref(false)
@@ -90,6 +99,11 @@ const closeNotificationModal = () => {
 
     <!-- Search Form -->
     <div class="card mb-8">
+      <!-- Debug info (remove in production) -->
+      <div class="mb-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-xs">
+        <strong>Debug:</strong> ZIP: "{{ searchState.zipCode }}" | Product: "{{ searchState.product }}"
+      </div>
+      
       <form @submit.prevent="handleSearch" class="space-y-6">
         <div class="grid md:grid-cols-2 gap-6">
           <ZipCodeInput v-model="searchState.zipCode" />
