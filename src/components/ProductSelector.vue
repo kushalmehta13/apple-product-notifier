@@ -17,19 +17,19 @@ const products = [
     id: 'iphone-17-pro-max-256gb',
     name: 'iPhone 17 Pro Max',
     storage: '256GB',
-    colors: ['Natural Titanium', 'Blue Titanium', 'White Titanium', 'Black Titanium']
+    colors: ['Cosmic Orange', 'Deep Blue', 'Silver']
   },
   {
     id: 'iphone-17-pro-max-512gb',
     name: 'iPhone 17 Pro Max',
     storage: '512GB',
-    colors: ['Natural Titanium', 'Blue Titanium', 'White Titanium', 'Black Titanium']
+    colors: ['Cosmic Orange', 'Deep Blue', 'Silver']
   },
   {
     id: 'iphone-17-pro-max-1tb',
     name: 'iPhone 17 Pro Max',
     storage: '1TB',
-    colors: ['Natural Titanium', 'Blue Titanium', 'White Titanium', 'Black Titanium']
+    colors: ['Cosmic Orange', 'Deep Blue', 'Silver']
   }
 ]
 
@@ -38,8 +38,6 @@ const selectedColor = ref('')
 
 // Sync with external modelValue changes
 watch(() => props.modelValue, (newValue) => {
-  console.log('ProductSelector received modelValue:', newValue)
-  
   if (!newValue) {
     selectedStorage.value = ''
     selectedColor.value = ''
@@ -77,18 +75,15 @@ const updateModelValue = () => {
     newValue = selectedStorage.value
   }
   
-  console.log('ProductSelector emitting:', newValue)
   emit('update:modelValue', newValue)
 }
 
 const handleStorageChange = () => {
-  console.log('Storage changed to:', selectedStorage.value)
   selectedColor.value = '' // Reset color when storage changes
   updateModelValue()
 }
 
 const handleColorChange = () => {
-  console.log('Color changed to:', selectedColor.value)
   updateModelValue()
 }
 </script>
